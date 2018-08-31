@@ -70,6 +70,8 @@ open class Floaty: UIView {
     @IBInspectable
     @objc open var rotationDegrees: CGFloat = -45
     
+    let plusSize: CGFloat = 20.0
+    
     /**
      Animation speed of buttons
      */
@@ -294,11 +296,11 @@ open class Floaty: UIView {
         }
         
         setCircleLayer()
-        if buttonImage == nil {
+//        if buttonImage == nil {
             setPlusLayer()
-        } else {
-            setButtonImage()
-        }
+//        } else {
+//            setButtonImage()
+//        }
         setShadow()
     }
     
@@ -322,8 +324,9 @@ open class Floaty: UIView {
                            usingSpringWithDamping: 0.55,
                            initialSpringVelocity: 0.3,
                            options: UIViewAnimationOptions(), animations: { () -> Void in
-                            self.plusLayer.transform = CATransform3DMakeRotation(self.degreesToRadians(self.rotationDegrees), 0.0, 0.0, 1.0)
-                            self.buttonImageView.transform = CGAffineTransform(rotationAngle: self.degreesToRadians(self.rotationDegrees))
+                            self.plusLayer.transform = CATransform3DMakeRotation(self.degreesToRadians(self.rotationDegrees), 0, 0, 0.1)
+//
+//                            self.buttonImageView.transform = CGAffineTransform(rotationAngle: self.degreesToRadians(self.rotationDegrees))
                             self.overlayView.alpha = 1
             }, completion: {(f) -> Void in
                 self.overlayViewDidCompleteOpenAnimation = true
@@ -627,18 +630,22 @@ open class Floaty: UIView {
     
     fileprivate func setCircleLayer() {
         circleLayer.removeFromSuperlayer()
+        print("Floaty...")
+        print(size)
         circleLayer.frame = CGRect(x: 0, y: 0, width: size, height: size)
-        circleLayer.backgroundColor = buttonColor.cgColor
-        circleLayer.cornerRadius = size/2
+//        circleLayer.backgroundColor = buttonColor.cgColor
+        circleLayer.contents = buttonImage?.cgImage;
+//        circleLayer.cornerRadius = size/2
         layer.addSublayer(circleLayer)
     }
     
     fileprivate func setPlusLayer() {
+        let shadowHack: CGFloat = 3.0
         plusLayer.removeFromSuperlayer()
-        plusLayer.frame = CGRect(x: 0, y: 0, width: size, height: size)
+        plusLayer.frame = CGRect(x: size/2 - plusSize/2, y: size/2 - plusSize/2 - shadowHack, width: plusSize, height: plusSize)
         plusLayer.lineCap = kCALineCapRound
         plusLayer.strokeColor = plusColor.cgColor
-        plusLayer.lineWidth = 2.0
+        plusLayer.lineWidth = 2.5
         plusLayer.path = plusBezierPath().cgPath
         layer.addSublayer(plusLayer)
     }
@@ -694,10 +701,11 @@ open class Floaty: UIView {
     
     fileprivate func plusBezierPath() -> UIBezierPath {
         let path = UIBezierPath()
-        path.move(to: CGPoint(x: size/2, y: size/3))
-        path.addLine(to: CGPoint(x: size/2, y: size-size/3))
-        path.move(to: CGPoint(x: size/3, y: size/2))
-        path.addLine(to: CGPoint(x: size-size/3, y: size/2))
+        
+        path.move(to: CGPoint(x: plusSize/2, y: 0))
+        path.addLine(to: CGPoint(x: plusSize/2, y: plusSize))
+        path.move(to: CGPoint(x: 0, y: plusSize/2))
+        path.addLine(to: CGPoint(x: plusSize, y: plusSize/2))
         return path
     }
     

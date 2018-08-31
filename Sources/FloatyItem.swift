@@ -23,7 +23,7 @@ open class FloatyItem: UIView {
     /**
      This object's button size.
      */
-    @objc open var size: CGFloat = 42 {
+    @objc open var size: CGFloat = 52 {
         didSet {
             self.frame = CGRect(x: 0, y: 0, width: size, height: size)
             titleLabel.frame.origin.y = self.frame.height/2-titleLabel.frame.size.height/2
@@ -60,6 +60,7 @@ open class FloatyItem: UIView {
      Title Shadow color.
      */
     @objc open var titleShadowColor: UIColor = UIColor.black
+    
 
     /**
      If you touch up inside button, it execute handler.
@@ -67,7 +68,7 @@ open class FloatyItem: UIView {
     @objc open var handler: ((FloatyItem) -> Void)? = nil
 
     @objc open var imageOffset: CGPoint = CGPoint.zero
-    @objc open var imageSize: CGSize = CGSize(width: 25, height: 25) {
+    @objc open var imageSize: CGSize = CGSize(width: 20, height: 20) {
         didSet {
             _iconImageView?.frame = CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height)
             _iconImageView?.center = CGPoint(x: size/2, y: size/2) + imageOffset
@@ -82,7 +83,7 @@ open class FloatyItem: UIView {
     /**
      Shape layer of button.
      */
-    fileprivate var circleLayer: CAShapeLayer = CAShapeLayer()
+    fileprivate var circleLayer: CAGradientLayer = CAGradientLayer()
 
     /**
      If you keeping touch inside button, button overlaid with tint layer.
@@ -220,12 +221,20 @@ open class FloatyItem: UIView {
     }
 
     fileprivate func createCircleLayer() {
-        //        circleLayer.frame = CGRectMake(frame.size.width - size, 0, size, size)
-        let castParent : Floaty = superview as! Floaty
-        circleLayer.frame = CGRect(x: castParent.itemSize/2 - (size/2), y: 0, width: size, height: size)
-        circleLayer.backgroundColor = buttonColor.cgColor
+        circleLayer.frame = self.bounds
+        circleLayer.colors = [UIColor(red: 199/255, green: 176/255, blue: 253/255, alpha: 1).cgColor, UIColor(red: 160/255, green: 197/255, blue: 252/255, alpha: 1).cgColor]
+        circleLayer.startPoint = CGPoint(x:0, y:0)
+        circleLayer.name = "GTGradient"
+        circleLayer.endPoint = CGPoint(x:1, y:1)
+        if (self.layer.sublayers != nil) {
+            for layer in self.layer.sublayers! {
+                if layer.name == "GTGradient" {
+                    layer.removeFromSuperlayer()
+                }
+            }
+        }
         circleLayer.cornerRadius = size/2
-        layer.addSublayer(circleLayer)
+        layer.insertSublayer(circleLayer, at: 0)
     }
 
     fileprivate func createTintLayer() {

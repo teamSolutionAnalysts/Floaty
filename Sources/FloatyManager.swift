@@ -53,12 +53,10 @@ open class FloatyManager: NSObject {
         }
     }
     
-    private let fontDescriptor: UIFontDescriptor
     private var _font: UIFont
     
     public override init() {
-        fontDescriptor = UIFont.systemFont(ofSize: 20.0).fontDescriptor
-        _font = UIFont(descriptor: fontDescriptor, size: 20)
+        _font = UIFont(name: "HelveticaNeue-Bold", size: 11.5)!
     }
     
     open var font: UIFont {
